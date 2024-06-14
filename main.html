@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+ 
+    <title>MYUMKM JOGJA</title>
+  </head>
+  <body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="input-group mt-4">
+                    <input type="text" class="form-control" id="search-input">
+                    <div class="input-group-append">
+                        <button onclick="hasilPencarian()" type="submit" class="btn btn-info">CARI</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <div class="row" id="results"></div>
+    </div>
+
+    <script>
+        function hasilPencarian() {
+            let query = $('#search-input').val();
+            $.ajax({
+                url: 'http://127.0.0.1:8000/api/masterdata/v1/search',
+                method: 'GET',
+                data: { q: query },
+                success: function(res) {
+                    $('#results').empty();
+                    if(res.success === true && query.trim() !== "") {
+                        res.data.forEach(function(item) {
+                            let card = `
+                                <div class="col-md-6 col-lg-4 mb-4">
+                                    <div class="card h-100">
+                                        <img src="http://127.0.0.1:8000/storage/${item.fotopenjual}"
+                                        class="card-img-top" alt="${item.namapenjual}" height="200">
+                                        <div class="card-body">
+                                            <h5 class="card-title">${item.namapenjual}</h5>
+                                            <p class="card-text">Umur: ${item.umurpenjual}</p>
+                                            <p class="card-text">Alamat: ${item.alamatpenjual}</p>
+                                        </div>
+                                    </div>
+                                </div>`;
+                            $('#results').append(card);
+                        });
+                    } else {
+                        $('#results').html('<div class="col-12"><p class="text-center">Data Tidak Ditemukan</p></div>');
+                    }
+                }
+            });
+        }
+    </script>
+  </body>
+</html>
